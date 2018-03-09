@@ -4,6 +4,13 @@ service: service-acme-auto
 
 custom:
   tableName: 'orders-table-${self:provider.stage}'
+  stage: ${opt:stage, self:provider.stage}
+  authorizer:
+    users:
+      name: authorizerUser
+      type: TOKEN
+      identitySource: method.request.header.Authorization
+      identityValidationExpression: Bearer (.*)
 
 provider:
   name: aws
@@ -31,6 +38,7 @@ functions:
   #     - http: ANY /
   #     - http: 'ANY {proxy+}'
 
+
   getOrder:
     handler: index.handler
     events:
@@ -42,7 +50,12 @@ functions:
   getAllOrders:
     handler: index.handler
     events:
-      - http: 'GET /orders'
+      - http:
+          path: /orders
+          method: 'get'
+          authorizer: ${self:custom.authorizer.users}
+  authorizerUser:
+    handler: authorizer.user
 
 resources:
   Resources:
