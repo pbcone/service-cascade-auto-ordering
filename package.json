@@ -1,0 +1,27 @@
+{
+  "name": "service-acme-auto",
+  "version": "1.0.0",
+  "description": "an AWS serverless service for Acme Auto ordering",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pbcone/service-acme-auto.git"
+  },
+  "author": "Matti Cone <mcone@cbtnuggets.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pbcone/service-acme-auto/issues"
+  },
+  "homepage": "https://github.com/pbcone/service-acme-auto#readme",
+  "dependencies": {
+    "aws-sdk": "^2.206.0",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "serverless": "^1.26.1",
+    "serverless-http": "^1.5.3",
+    "tmp": "0.0.33"
+  }
+}
