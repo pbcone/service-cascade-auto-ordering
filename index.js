@@ -3,60 +3,32 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
 const AWS = require('aws-sdk');
-const fs = require('fs');
-const tmp = require('tmp');
 
 const ORDERS_TABLE = process.env.ORDERS_TABLE;
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
-function createTempJsonFile (jsonObject) {
-  fs.writeFile("/tmp/test.txt", "testing", function (err) {
-        if (err) {
-            context.fail("writeFile failed: " + err);
-        } else {
-            context.succeed("writeFile succeeded");
-        }
-    });
-
-
-
-  let filename = '/tpm/tempOrder.json';
-  // fs.writeFile(filename, JSON.stringify(jsonObject), function (err) {
-  //   if (err) throw err;
-  //   console.log('JSON Saved!');
-  // });
-  return filename;
-}
-
+const s3Bucket= 'acme-auto-dev-order-storage.s3.amazonaws.com'
 
 function saveToS3 (jsonObject, order_id) {
-  // var tmpobj = tmp.fileSync();
-  // console.log('File: ', tmpobj.name);
-  // console.log('Filedescriptor: ', tmpobj.fd);
 
   var s3 = new AWS.S3();
   console.log('Starting upload to S3');
-  var params = {Bucket: 'acme-auto-dev-order-storage', Key: 'testcase', Body: 'helloWorld'};
+
+  var s3 = new AWS.S3();
+  var params = {
+      ACL : 'public-read',
+      Bucket : 'acme-auto-dev-order-storage',
+      Key : order_id,
+      Body : JSON.stringify(jsonObject),
+      ContentType: "application/json"
+  }
   s3.upload(params, function(err, data) {
-    if(err){
-      console.log(err);
+    if (err) {
+        console.log(err, err.stack);
     }else{
-      console.log('Sucessfully uploaded to S3');
+         console.log("Success", data);
     }
   });
 
-
-  // fs.readFile(createTempJsonFile(jsonObject), function(err,data){
-  //   if(err) throw err;
-  //   var params = {Bucket: 'acme-auto-dev-order-storage', Key: order_id, Body: data};
-  //   s3.upload(params, function(err, data) {
-  //     if(err){
-  //       console.log(err);
-  //     }else{
-  //       console.log('Sucessfully uploaded to S3');
-  //     }
-  //   });
-  // })
 }
 
 app.use(bodyParser.json({ strict: false }));
@@ -81,6 +53,7 @@ app.get('/orders/:order_id', function (req, res) {
     }
     if (result.Item) {
       const {order_id, customer_id} = result.Item;
+      // res.send(s3Bucket+order_id);
       res.json({ order_id, customer_id });
     } else {
       res.status(404).json({ error: "Order not found" });
@@ -98,20 +71,10 @@ app.get('/orders', function (req, res) {
       res.status(400).json({ error: 'Could not get orders' });
     }
     if (result) {
-
-      const response = {
-        statusCode: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Credentials': '*',
-        },
-        body: JSON.stringify({
-          orders: result
-        }),
-      };
-      // res.send(response);
-      // const {order_id, customer_id} = result;
-      res.json({ result });
+      console.log('RESULTS:' ,result);
+      orders = result.Items;
+      console.log('ARRAY: ', orders);
+      res.json({ orders });
     } else {
       res.status(404).json({ error: "Orders not found" });
     }
@@ -146,12 +109,15 @@ app.post('/order_id', function (req, res) {
 
   saveToS3(req.body, order_id);
 
-  dynamoDb.put(params, (error) => {
+
+  dynamoDb.put(params, (error) => {     //TODO move this to a function use params in it and saveToS3
     if (error) {
       console.log(error);
       res.status(400).json({ error: 'Could not create order' });
     }
-    res.json({ order_id, customer_id });
+    let url ='https://acme-auto-dev-order-storage.s3.amazonaws.com/'+ order_id;
+    let status = 'Your Order has been Submited';
+    res.status(200).json({status , url });
   });
 })
 
