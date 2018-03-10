@@ -32,21 +32,18 @@ provider:
     ORDERS_TABLE: ${self:custom.tableName}
 
 functions:
-  # app:
-  #   handler: index.handler
-  #   events:
-  #     - http: ANY /
-  #     - http: 'ANY {proxy+}'
-
-
   getOrder:
     handler: index.handler
     events:
-      - http: 'GET /orders/{proxy+}'
+      - http:
+          path: /orders/{proxy+}
+          method: get
   createOrder:
     handler: index.handler
     events:
-      - http: 'POST /order_id'
+      - http:
+          path: /order_id
+          method: post
   getAllOrders:
     handler: index.handler
     events:
