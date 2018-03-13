@@ -9,7 +9,7 @@ const s3Bucket= 'acme-auto-dev-order-storage.s3.amazonaws.com'
 
 app.use(bodyParser.json({ strict: false }));
 
-app.get('/orders/:order_id', function (req, res) {
+app.get('/orders/:order_id', (req, res) => {
     const params = {
         TableName: ORDERS_TABLE,
         Key: {
@@ -30,7 +30,7 @@ app.get('/orders/:order_id', function (req, res) {
     });
 })
 
-app.get('/orders', function (req, res) {
+app.get('/orders', (req, res) => {
     const params = {
         TableName: ORDERS_TABLE
     }
@@ -50,8 +50,8 @@ app.get('/orders', function (req, res) {
     });
 })
 
-app.post('/order_id', function (req, res) {
-    const { order_id, customer_id, make, model, package } = req.body;
+app.post('/order_id', (req, res) => {
+    const { order_id, customer_id, make, model, pkg } = req.body;
     if (typeof order_id !== 'string') {
         res.status(400).json({ error: '"order_id" must be a string' });
     } else if (typeof customer_id !== 'string') {
@@ -60,8 +60,8 @@ app.post('/order_id', function (req, res) {
         res.status(400).json({ error: '"make" must be a string' });
     } else if (typeof model !== 'string') {
         res.status(400).json({ error: '"model" must be a string' });
-    } else if (typeof package !== 'string') {
-        res.status(400).json({ error: '"package" must be a string' });
+    } else if (typeof pkg !== 'string') {
+        res.status(400).json({ error: '"pkg" must be a string' });
     }
     const params = {
         TableName: ORDERS_TABLE,
@@ -70,7 +70,7 @@ app.post('/order_id', function (req, res) {
             customer_id: customer_id,
             make: make,
             model: model,
-            package: package
+            pkg: pkg
         },
     };
     saveOrderRecordInS3(req.body);
@@ -85,16 +85,16 @@ app.post('/order_id', function (req, res) {
     });
 })
 
-function saveOrderRecordInS3 (jsonObject) {
-    var s3 = new AWS.S3();
-    var params = {
+let saveOrderRecordInS3 = (jsonObject) => {
+    let s3 = new AWS.S3();
+    let params = {
         ACL : 'public-read',
         Bucket : 'acme-auto-dev-order-storage',
         Key : jsonObject.order_id,
         Body : JSON.stringify(jsonObject),
         ContentType: "application/json"
     }
-    s3.upload(params, function(err, data) {
+    s3.upload(params, (err, data) => {
         if (err) {
             console.log(err, err.stack);
         }else{

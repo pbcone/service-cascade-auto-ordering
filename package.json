@@ -4,7 +4,7 @@
   "description": "an AWS serverless service for Acme Auto ordering",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
     "express": "^4.16.2",
     "http": "0.0.0",
     "https": "^1.0.0",
+    "jest": "^22.4.2",
     "querystring": "^0.2.0",
     "serverless": "^1.26.1",
     "serverless-http": "^1.5.3",
