@@ -53,10 +53,10 @@ functions:
           authorizer: ${self:custom.authorizer.users}
   authorizerUser:
     handler: authorizer.user
-  supplier:
+  supplierv2:
     handler: supplier.handler
     events:
-      - stream: arn:aws:dynamodb:us-east-1:022673376606:table/orders-table-dev/stream/2018-03-12T21:38:24.595
+      - stream: arn:aws:dynamodb:us-east-1:022673376606:table/orders-table-dev/stream/2018-03-13T21:31:10.091
 
 resources:
   Resources:

@@ -1,6 +1,6 @@
 'use strict';
 
-const generatePolicy = function(principalId, effect, resource) {
+const generatePolicy = (principalId, effect, resource) => {
     const authResponse = {};
     authResponse.principalId = principalId;
     if (effect && resource) {
@@ -35,5 +35,6 @@ module.exports.user = (event, context, callback) => {
           default:
               callback('Unauthorized');
        }
-
 };
+
+module.exports.generatePolicy = generatePolicy
