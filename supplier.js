@@ -36,9 +36,6 @@ let addOrderIdToDynamo = (supplierOrderId, orderId) => {
           console.log(error);
           res.status(400).json({ error: 'Could not find order' });
       }
-      let url ='https://acme-auto-dev-order-storage.s3.amazonaws.com/'+ order_id;
-      let status = 'Your Order has been Submited';
-      res.status(200).json({status , url });
   });
 }
 
