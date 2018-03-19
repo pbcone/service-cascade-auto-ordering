@@ -1,4 +1,4 @@
-# service-acme-auto
+# service-cascade-auto-ordering
 AWS service for custom car ordering using the serverless framework. Clients can place orders, or get orders (with proper authentication). Orders are stores in DynamoDB and a copy saved in S3 with public read access for users to download.
 
 Once Orders are placed a DynamoDb stream event triggers a lambda to place an order to the corresponding suppliers api.
