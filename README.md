@@ -25,3 +25,5 @@ To retrieve Single order
 ```
 GET https://vxvtlzhbh8.execute-api.us-east-1.amazonaws.com/dev/orders/($order_id)
 ```
+## Authorization
+	GET requests require additional key value pair "Authorization" : "Bearer allow" 
